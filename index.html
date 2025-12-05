@@ -1,127 +1,452 @@
-<!doctype html>
-<html lang="zh-Hant">
+<!DOCTYPE html>
+<html lang="zh-TW">
 <head>
-  <meta charset="utf-8" />
-  <title>陳相州老師的日語教學AI平台</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <meta name="description" content="教學上所使用的AI應用程式" />
-  <style>
-    :root {
-      --bg: #0f172a;
-      --bg-alt: #020617;
-      --card-bg: #020617;
-      --accent: #38bdf8;
-      --accent-soft: rgba(56, 189, 248, 0.15);
-      --text-main: #e5e7eb;
-      --text-muted: #9ca3af;
-      --border-subtle: #1f2937;
-      --tag-bg: rgba(15, 118, 110, 0.2);
-      --tag-text: #a5f3fc;
-    }
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif;
-      background: radial-gradient(circle at top left, #1e293b 0, #020617 45%, #000 100%);
-      color: var(--text-main);
-      line-height: 1.6;
-    }
-    a {
-      color: var(--accent);
-      text-decoration: none;
-    }
-    a:hover {
-      text-decoration: underline;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>陳相州老師的日語教學AI平台</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- React & ReactDOM -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    
+    <!-- Babel for JSX -->
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
 
-    /* Layout */
-    .page {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-    }
-    .container {
-      width: 100%;
-      max-width: 1120px;
-      margin: 0 auto;
-      padding: 0 1.5rem;
-    }
+    <style>
+        /* Custom scrollbar for better aesthetics */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1; 
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1; 
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8; 
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+    <div id="root"></div>
 
-    /* Navbar */
-    .navbar {
-      position: sticky;
-      top: 0;
-      z-index: 50;
-      backdrop-filter: blur(16px);
-      background: linear-gradient(to bottom, rgba(15, 23, 42, 0.95), rgba(15, 23, 42, 0.7), transparent);
-      border-bottom: 1px solid rgba(148, 163, 184, 0.15);
-    }
-    .navbar-inner {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 64px;
-    }
-    .brand {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-    .brand-icon {
-      width: 32px;
-      height: 32px;
-      border-radius: 999px;
-      background: radial-gradient(circle at 30% 30%, #e0f2fe, #38bdf8 40%, #0f172a 100%);
-      box-shadow: 0 0 0 1px rgba(148, 163, 184, 0.4), 0 0 20px rgba(56, 189, 248, 0.8);
-    }
-    .brand-text-main {
-      font-weight: 600;
-      letter-spacing: 0.02em;
-    }
-    .brand-text-sub {
-      font-size: 0.75rem;
-      color: var(--text-muted);
-    }
-    .nav-links {
-      display: flex;
-      gap: 1rem;
-      font-size: 0.9rem;
-    }
-    .nav-links a {
-      padding: 0.35rem 0.6rem;
-      border-radius: 999px;
-      color: var(--text-muted);
-      text-decoration: none;
-    }
-    .nav-links a:hover {
-      background: rgba(15, 23, 42, 0.85);
-      color: #e5e7eb;
-    }
+    <script type="text/babel">
+        const { useState } = React;
 
-    /* Hero */
-    .hero {
-      padding: 3.5rem 0 2rem;
-    }
-    .hero-grid {
-      display: grid;
-      grid-template-columns: minmax(0, 2.2fr) minmax(0, 1.8fr);
-      gap: 2rem;
-      align-items: center;
-    }
-    .hero-eyebrow {
-      display: inline-flex;
-      align-items: center;
-      gap: 0.5rem;
-      padding: 0.25rem 0.7rem;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.9);
-      border: 1px solid rgba(56, 189, 248, 0.4);
-      color: var(--accent);
-      font-size: 0.75rem;
-      margin-bottom: 1rem;
-    }
-    .hero-title {
-      font-size
+        // --- Icons Components (SVG) ---
+        // Replacing lucide-react imports with inline SVGs for standalone HTML compatibility
+        const IconWrapper = ({ children, className }) => (
+            <svg 
+                xmlns="http://www.w3.org/2000/svg" 
+                width="24" 
+                height="24" 
+                viewBox="0 0 24 24" 
+                fill="none" 
+                stroke="currentColor" 
+                strokeWidth="2" 
+                strokeLinecap="round" 
+                strokeLinejoin="round" 
+                className={className}
+            >
+                {children}
+            </svg>
+        );
+
+        const Book = ({ className }) => (
+            <IconWrapper className={className}>
+                <path d="M4 19.5v-15A2.5 2.5 0 0 1 6.5 2H20v20H6.5a2.5 2.5 0 0 1 0-5H20" />
+            </IconWrapper>
+        );
+
+        const Globe = ({ className }) => (
+            <IconWrapper className={className}>
+                <circle cx="12" cy="12" r="10" />
+                <line x1="2" x2="22" y1="12" y2="12" />
+                <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z" />
+            </IconWrapper>
+        );
+
+        const Mic = ({ className }) => (
+            <IconWrapper className={className}>
+                <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z" />
+                <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
+                <line x1="12" x2="12" y1="19" y2="23" />
+                <line x1="8" x2="16" y1="23" y2="23" />
+            </IconWrapper>
+        );
+
+        const PenTool = ({ className }) => (
+            <IconWrapper className={className}>
+                <path d="m12 19 7-7 3 3-7 7-3-3z" />
+                <path d="m18 13-1.5-7.5L2 2l3.5 14.5L13 18l5-5z" />
+                <path d="m2 2 7.586 7.586" />
+                <circle cx="11" cy="11" r="2" />
+            </IconWrapper>
+        );
+
+        const GraduationCap = ({ className }) => (
+            <IconWrapper className={className}>
+                <path d="M22 10v6M2 10l10-5 10 5-10 5z" />
+                <path d="M6 12v5c3 0 6-1 6-1" />
+            </IconWrapper>
+        );
+
+        const Gamepad2 = ({ className }) => (
+            <IconWrapper className={className}>
+                <line x1="6" x2="10" y1="12" y2="12" />
+                <line x1="8" x2="8" y1="10" y2="14" />
+                <line x1="15" x2="15.01" y1="13" y2="13" />
+                <line x1="18" x2="18.01" y1="11" y2="11" />
+                <rect width="20" height="12" x="2" y="6" rx="2" />
+            </IconWrapper>
+        );
+
+        const Music = ({ className }) => (
+            <IconWrapper className={className}>
+                <path d="M9 18V5l12-2v13" />
+                <circle cx="6" cy="18" r="3" />
+                <circle cx="18" cy="16" r="3" />
+            </IconWrapper>
+        );
+
+        const Users = ({ className }) => (
+            <IconWrapper className={className}>
+                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                <circle cx="9" cy="7" r="4" />
+                <path d="M22 21v-2a4 4 0 0 0-3-3.87" />
+                <path d="M16 3.13a4 4 0 0 1 0 7.75" />
+            </IconWrapper>
+        );
+
+        const Search = ({ className }) => (
+            <IconWrapper className={className}>
+                <circle cx="11" cy="11" r="8" />
+                <line x1="21" x2="16.65" y1="21" y2="16.65" />
+            </IconWrapper>
+        );
+
+        const ExternalLink = ({ className }) => (
+            <IconWrapper className={className}>
+                <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
+                <polyline points="15 3 21 3 21 9" />
+                <line x1="10" x2="21" y1="14" y2="3" />
+            </IconWrapper>
+        );
+
+        // --- Main Application ---
+
+        const TeachingPlatform = () => {
+            const [searchTerm, setSearchTerm] = useState('');
+
+            // Data Structure - Updated with Macaron Colors
+            const courses = [
+                {
+                    id: 'grammar',
+                    title: '日語語法一',
+                    icon: <Book className="w-6 h-6 text-sky-600" />,
+                    // Macaron Blue (Sky)
+                    color: 'bg-sky-200 text-sky-800',
+                    headerBg: 'bg-sky-200',
+                    items: [
+                        { title: '日語名詞和形容詞的練習', links: ['https://poe.com/AppPR8QCHQ2TM'] },
+                        { title: '日語動詞分類練習', links: ['https://gemini.google.com/share/1993dc816d30'] },
+                        { title: '日語動詞變化練習', links: ['https://gemini.google.com/share/fd2b03fd8a9c'] },
+                        { title: '日語動作順序大比拼（て/てから/たあとで）', links: ['https://gemini.google.com/share/4c87d7e48a56'] },
+                    ]
+                },
+                {
+                    id: 'advanced',
+                    title: '高級日語',
+                    icon: <Globe className="w-6 h-6 text-teal-600" />,
+                    // Macaron Mint (Teal/Emerald mix)
+                    color: 'bg-teal-200 text-teal-800',
+                    headerBg: 'bg-teal-200',
+                    items: [
+                        { title: 'L1 初めての雪', links: ['https://poe.com/chen_shiang_jou_LL1'] },
+                        { title: 'L2 いたわる', links: ['https://poe.com/chen_shiang_jou_L2'] },
+                        { title: '補充教材：花蓮堰塞湖事件', links: ['https://poe.com/1002App3JQIS6P575'] },
+                        { title: 'L3 そば屋の先生', links: ['https://poe.com/shiang_Jou_L3'] },
+                        { title: 'L4 記事の裏側', links: ['https://poe.com/shiang_jou_L4'] },
+                        { title: 'L5 さばく', links: ['https://poe.com/chen_shiang_jou_L5'] },
+                    ]
+                },
+                {
+                    id: 'pronunciation',
+                    title: '日語發音',
+                    icon: <Mic className="w-6 h-6 text-pink-600" />,
+                    // Macaron Pink
+                    color: 'bg-pink-200 text-pink-800',
+                    headerBg: 'bg-pink-200',
+                    items: [
+                        { title: '影子跟讀練習-私の一日', links: ['https://poe.com/chen-shiang_jou_sha5'] },
+                        { title: '課堂跟讀互評紀錄表', links: ['https://gemini.google.com/share/6695dd8f233c'] },
+                        { title: '日語單字發音考試（教師用）', links: ['https://poe.com/chen_shiang_jou_test'] },
+                    ]
+                },
+                {
+                    id: 'research',
+                    title: '研究方法指導',
+                    icon: <PenTool className="w-6 h-6 text-orange-600" />,
+                    // Macaron Peach/Orange
+                    color: 'bg-orange-200 text-orange-800',
+                    headerBg: 'bg-orange-200',
+                    items: [
+                        { title: '大專生研究計劃輔助系統', links: ['https://poe.com/shiang_jou_research'] },
+                    ]
+                },
+                {
+                    id: 'masters',
+                    title: '日本語教育方法研究（碩士班）',
+                    icon: <GraduationCap className="w-6 h-6 text-violet-600" />,
+                    // Macaron Lavender (Violet)
+                    color: 'bg-violet-200 text-violet-800',
+                    headerBg: 'bg-violet-200',
+                    items: [
+                        { 
+                            title: '繪本製作：結合SDGs的日語繪本', 
+                            links: ['https://gemini.google.com/share/bbfc605d1ee9'] 
+                        },
+                        { 
+                            title: '繪本製作：學生作品集', 
+                            type: 'multi-link',
+                            links: [
+                                'https://gemini.google.com/share/4d057b75a334',
+                                'https://g.co/gemini/share/35cae68e13b4',
+                                'https://g.co/gemini/share/df77c28dd90e',
+                                'https://g.co/gemini/share/dac1b76c79c8',
+                                'https://g.co/gemini/share/dfc181260d85',
+                                'https://g.co/gemini/share/b6989842a384',
+                                'https://gemini.google.com/share/21e946a29b4b',
+                                'https://g.co/gemini/share/ab8df1b2194c',
+                                'https://g.co/gemini/share/acd5de216a7d'
+                            ] 
+                        },
+                        { 
+                            title: '作文批改助教', 
+                            type: 'multi-link',
+                            links: [
+                                'https://poe.com/AppJW06XFGZWN',
+                                'https://poe.com/preview/zTQZ6E33lPIgKELnvSFL',
+                                'https://gemini.google.com/share/68954d5b8b1c',
+                                'https://poe.com/20251023_SAKUBUN',
+                                'https://poe.com/preview/PdE8mhYJLHGivkDuFO4F'
+                            ] 
+                        },
+                        { 
+                            title: 'Hiragana Game (ひらがなゲーム)', 
+                            type: 'multi-link',
+                            icon: <Gamepad2 className="w-4 h-4 inline mr-1 text-rose-400"/>,
+                            links: [
+                                'https://gemini.google.com/share/d33dc83279ae',
+                                'https://poe.com/preview/O4WaP0qU3lg3ppkUKA8e',
+                                'https://gemini.google.com/share/b05f1e3439fc',
+                                'https://gemini.google.com/share/b4c67abb9367',
+                                'https://gemini.google.com/share/f4a22574d0f3'
+                            ] 
+                        },
+                        { 
+                            title: '成語學習遊戲', 
+                            type: 'multi-link',
+                            icon: <Gamepad2 className="w-4 h-4 inline mr-1 text-rose-400"/>,
+                            links: [
+                                'https://idiom-puzzles.yay.boo/',
+                                'https://gemini.google.com/share/083936968a4a',
+                                'https://poe.com/YONJIJUKUGO20251016',
+                                'https://poe.com/preview/Wr8P49L2z5AsLfGTl29L',
+                                'https://gemini.google.com/share/2ae83857cd82',
+                                'https://g.co/gemini/share/875009896631',
+                                'https://gemini.google.com/share/f91ac954489b'
+                            ] 
+                        },
+                        { 
+                            title: '詞語解釋配對遊戲', 
+                            type: 'multi-link',
+                            icon: <Gamepad2 className="w-4 h-4 inline mr-1 text-rose-400"/>,
+                            links: [
+                                'https://gemini.google.com/share/4fc8573c636b',
+                                'https://gemini.google.com/share/cc142bc533d1',
+                                'https://gemini.google.com/share/5c21936f12fd',
+                                'https://gemini.google.com/share/bdfae1c7842c'
+                            ] 
+                        },
+                        { 
+                            title: '外來語語彙指導', 
+                            type: 'multi-link',
+                            links: [
+                                'https://poe.com/preview/ResPthaIF5mTKG5n1iSJ',
+                                'https://gemini.google.com/share/7d455194a693',
+                                'https://gemini.google.com/share/dba65c981ec9',
+                                'https://gemini.google.com/share/1054d83b28e8',
+                                'https://gemini.google.com/share/836874f29c7b',
+                                'https://gemini.google.com/share/1309dfc429db'
+                            ] 
+                        },
+                        { 
+                            title: '歌曲日語學習指導', 
+                            type: 'multi-link',
+                            icon: <Music className="w-4 h-4 inline mr-1 text-rose-400"/>,
+                            links: [
+                                'https://gemini.google.com/share/27c24ae7c1a8',
+                                'https://gemini.google.com/share/4f46ec0fa750',
+                                'https://poe.com/preview/X6TYCs5pHWinTb225hRD',
+                                'https://gemini.google.com/share/cc2f9bd59b0f',
+                                'https://poe.com/YMWKNETDREMN',
+                                'https://gemini.google.com/share/88bde4b46dcb'
+                            ] 
+                        },
+                        { 
+                            title: '日語作文批改助手', 
+                            type: 'multi-link',
+                            links: [
+                                'https://gemini.google.com/share/2024673eedc6',
+                                'https://poe.com/EJUSKBN',
+                                'https://gemini.google.com/share/8331ea35fc8c',
+                                'https://gemini.google.com/share/3e43e3f8d983'
+                            ] 
+                        },
+                    ]
+                }
+            ];
+
+            const getLinkSource = (url) => {
+                if (url.includes('poe.com')) return 'Poe';
+                if (url.includes('gemini.google.com') || url.includes('g.co')) return 'Gemini';
+                if (url.includes('yay.boo')) return 'Web App';
+                return 'Link';
+            };
+
+            const filteredCourses = courses.map(course => ({
+                ...course,
+                items: course.items.filter(item => 
+                    item.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                    course.title.toLowerCase().includes(searchTerm.toLowerCase())
+                )
+            })).filter(course => course.items.length > 0);
+
+            return (
+                <div className="min-h-screen bg-gradient-to-br from-pink-50 via-white to-blue-50 font-sans text-slate-700 pb-12">
+                
+                {/* Header */}
+                <header className="bg-white/80 backdrop-blur-md border-b border-pink-100 sticky top-0 z-50 shadow-sm">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
+                    <div className="flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div className="flex items-center space-x-3">
+                        <div className="bg-indigo-100 p-2.5 rounded-2xl">
+                            <Users className="text-indigo-500 w-6 h-6" />
+                        </div>
+                        <div>
+                            <h1 className="text-xl font-bold text-slate-800 tracking-tight">陳相州老師的日語教學AI平台</h1>
+                            <p className="text-sm text-slate-500 font-medium">AI 輔助日語學習與研究資源整合</p>
+                        </div>
+                        </div>
+                        
+                        <div className="relative w-full md:w-96">
+                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
+                            <Search className="h-5 w-5 text-slate-400" />
+                        </div>
+                        <input
+                            type="text"
+                            className="block w-full pl-11 pr-4 py-2.5 border border-pink-100 rounded-full leading-5 bg-pink-50/50 placeholder-slate-400 focus:outline-none focus:bg-white focus:ring-2 focus:ring-pink-300 focus:border-pink-300 sm:text-sm transition duration-200 ease-in-out shadow-inner"
+                            placeholder="搜尋課程或機器人名稱..."
+                            value={searchTerm}
+                            onChange={(e) => setSearchTerm(e.target.value)}
+                        />
+                        </div>
+                    </div>
+                    </div>
+                </header>
+
+                {/* Main Content */}
+                <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+                    
+                    {filteredCourses.length === 0 && (
+                    <div className="text-center py-20 bg-white/50 rounded-3xl">
+                        <p className="text-slate-500 text-lg">🍰 找不到相關的資源，請嘗試其他關鍵字。</p>
+                    </div>
+                    )}
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
+                    {filteredCourses.map((course) => (
+                        <div key={course.id} className="bg-white rounded-3xl shadow-lg shadow-slate-100/50 overflow-hidden flex flex-col hover:-translate-y-1 hover:shadow-xl transition-all duration-300 border border-slate-50">
+                        
+                        <div className={`px-6 py-5 ${course.headerBg} flex items-center space-x-3`}>
+                            <div className="p-2.5 bg-white/80 rounded-2xl shadow-sm backdrop-blur-sm">
+                            {course.icon}
+                            </div>
+                            <h2 className={`font-bold text-lg ${course.color.split(' ')[1]}`}>{course.title}</h2>
+                        </div>
+
+                        <div className="p-6 flex-1 bg-white">
+                            <ul className="space-y-5">
+                            {course.items.map((item, idx) => (
+                                <li key={idx} className="group">
+                                <div className="flex flex-col space-y-2.5">
+                                    <div className="flex items-start justify-between">
+                                    <h3 className="font-medium text-slate-700 flex items-center">
+                                        {item.icon && item.icon}
+                                        {item.title}
+                                    </h3>
+                                    </div>
+
+                                    <div className="flex flex-wrap gap-2 mt-1">
+                                    {item.links.map((link, linkIdx) => {
+                                        const source = getLinkSource(link);
+                                        const btnStyle = source === 'Poe' 
+                                        ? 'bg-violet-100 text-violet-700 hover:bg-violet-200 border-violet-100' 
+                                        : source === 'Gemini' 
+                                        ? 'bg-sky-100 text-sky-700 hover:bg-sky-200 border-sky-100'
+                                        : 'bg-orange-100 text-orange-700 hover:bg-orange-200 border-orange-100';
+                                        
+                                        const label = item.links.length === 1 ? '啟動 AI' : `連結 ${linkIdx + 1}`;
+
+                                        return (
+                                        <a
+                                            key={linkIdx}
+                                            href={link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className={`inline-flex items-center px-4 py-1.5 rounded-full text-xs font-bold border transition-all duration-200 ${btnStyle} shadow-sm hover:shadow`}
+                                        >
+                                            {label}
+                                            <ExternalLink className="ml-1.5 w-3 h-3 opacity-60" />
+                                        </a>
+                                        );
+                                    })}
+                                    </div>
+                                </div>
+                                {idx !== course.items.length - 1 && (
+                                    <div className="h-px bg-slate-100 mt-5 w-full border-b border-dashed border-slate-200" />
+                                )}
+                                </li>
+                            ))}
+                            </ul>
+                        </div>
+                        </div>
+                    ))}
+                    </div>
+                </main>
+
+                {/* Footer */}
+                <footer className="mt-12 py-8">
+                    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+                    <div className="inline-block px-6 py-2 bg-white/60 rounded-full backdrop-blur-sm shadow-sm border border-white">
+                        <p className="text-slate-500 text-sm">
+                        © {new Date().getFullYear()} 陳相州老師的日語教學AI平台
+                        </p>
+                    </div>
+                    </div>
+                </footer>
+                </div>
+            );
+        };
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<TeachingPlatform />);
+    </script>
+</body>
+</html>
